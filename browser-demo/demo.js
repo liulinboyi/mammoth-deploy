@@ -1,13 +1,29 @@
 (function() {
     document.getElementById("document")
         .addEventListener("change", handleFileSelect, false);
-        
+    let btn = document.querySelector("#print")
+    btn.addEventListener("click", function() {
+        print()
+    })
     function handleFileSelect(event) {
+        btn.disabled = true
         readFileInputEventAsArrayBuffer(event, function(arrayBuffer) {
             mammoth.convertToHtml({arrayBuffer: arrayBuffer})
                 .then(displayResult)
-                .done();
+                .done(function() {
+                    console.log('done')
+                    btn.disabled = false
+                });
         });
+    }
+
+    function print() {
+        const frame = document.createElement("iframe")
+        frame.style.display = "none"
+        document.body.appendChild(frame)
+        const cp = document.querySelector(".span8").cloneNode(true)
+        frame.contentWindow.window.document.body.appendChild(cp)
+        frame.contentWindow.window.print()
     }
     
     function displayResult(result) {
